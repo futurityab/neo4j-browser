@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -21,7 +21,56 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-const StyledSettingTextInput = styled.input`
+export const StyledSelect = styled.select`
+  background-color: #fff;
+  border: ${props => props.theme.formButtonBorder};
+  border-radius: 4px;
+  color: ${props => props.theme.inputText};
+  display: block;
+  height: 34px;
+  font-size: 14px;
+  padding: 6px 12px;
+  min-width: 120px;
+  width: 100%;
+`
+export const StyledInput = styled.input`
+  background-color: #fff;
+  border: ${props => props.theme.formButtonBorder};
+  border-radius: 4px;
+  color: ${props => props.theme.inputText};
+  display: block;
+  height: 34px;
+  font-size: 14px;
+  padding: 6px 12px;
+  width: 100%;
+
+  &[type='checkbox'] {
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+    width: auto;
+  }
+`
+
+export const StyledForm = styled.form`
+  width: 100%;
+`
+
+export const StyledFormElement = styled.div`
+  margin: 0 0 10px 0;
+`
+
+export const StyledFormElementWrapper = styled.div`
+  display: flex;
+  > div {
+    flex-grow: 1;
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+  }
+`
+
+const StyledSettingTextInput = styled(StyledInput)`
   height: 34px;
   color: #555;
   font-size: 14px;
@@ -35,9 +84,19 @@ const StyledSettingTextInput = styled.input`
 const StyledCheckbox = styled.input`
   margin-right: 10px;
 `
-const StyledLabel = styled.label`
-  margin-left: 10px;
+const StyledRadio = styled.input`
+  margin-right: 10px;
+`
+export const StyledLabel = styled.label`
+  /* margin-left: 10px; */
   display: inline-block;
+  font-weight: 600;
+  vertical-align: middle;
+
+  input[type='radio'] + & {
+    font-weight: 400;
+  }
+
   &:first-letter {
     text-transform: uppercase;
   }
@@ -51,39 +110,38 @@ export const TextInput = props => {
   return <StyledSettingTextInput {...rest}>{children}</StyledSettingTextInput>
 }
 
-export const CheckboxSelector = props => {
-  return props.checked ? (
-    <StyledCheckbox type='checkbox' {...props} />
-  ) : (
-    <StyledCheckbox type='checkbox' {...props} />
-  )
-}
+export const CheckboxSelector = props => (
+  <StyledCheckbox type="checkbox" {...props} />
+)
 
 export class RadioSelector extends Component {
   state = {}
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state.selectedValue = this.props.selectedValue || null
   }
-  isSelectedValue (option) {
+
+  isSelectedValue(option) {
     return option === this.state.selectedValue
   }
-  render () {
+
+  render() {
     return (
       <form>
         {this.props.options.map(option => {
           return (
             <StyledRadioEntry key={option}>
-              <input
-                type='radio'
+              <StyledRadio
+                type="radio"
                 value={option}
+                id={option}
                 checked={this.isSelectedValue(option)}
                 onChange={event => {
-                  this.state.selectedValue = option
+                  this.setState({ selectedValue: option })
                   this.props.onChange(event)
                 }}
               />
-              <StyledLabel>{option}</StyledLabel>
+              <StyledLabel htmlFor={option}>{option}</StyledLabel>
             </StyledRadioEntry>
           )
         })}

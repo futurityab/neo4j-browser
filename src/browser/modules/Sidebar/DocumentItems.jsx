@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -38,7 +38,11 @@ export const DocumentItems = ({ header, items, onItemClick = null }) => {
       case 'link':
         return (
           <StyledHelpItem key={item.command}>
-            <StyledHelpLink href={item.command} target='_blank'>
+            <StyledHelpLink
+              href={item.command}
+              target="_blank"
+              rel="noreferrer"
+            >
               {item.name}
             </StyledHelpLink>
           </StyledHelpItem>
@@ -58,13 +62,13 @@ export const DocumentItems = ({ header, items, onItemClick = null }) => {
     <DrawerSection>
       <DrawerSubHeader>{header}</DrawerSubHeader>
       <DrawerSectionBody>
-        <ul className='document'>{listOfItems}</ul>
+        <ul className="document">{listOfItems}</ul>
       </DrawerSectionBody>
     </DrawerSection>
   )
 }
 
-const mapDispatchToProps = (dispatch, ownProps) => {
+const mapDispatchToProps = (_dispatch, ownProps) => {
   return {
     onItemClick: cmd => {
       ownProps.bus.send(SET_CONTENT, setContent(cmd))
@@ -72,9 +76,4 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   }
 }
 
-export default withBus(
-  connect(
-    null,
-    mapDispatchToProps
-  )(DocumentItems)
-)
+export default withBus(connect(null, mapDispatchToProps)(DocumentItems))

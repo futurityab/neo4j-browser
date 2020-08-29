@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,11 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* global describe, test, expect */
 import React from 'react'
-import { render } from '@testing-library/react'
-import { v1 as neo4j } from 'neo4j-driver'
-
+import { render } from '@testing-library/react/pure'
+import neo4j from 'neo4j-driver'
 import { PlanView, PlanStatusbar } from './PlanView'
 
 describe('PlanViews', () => {
@@ -75,10 +73,13 @@ describe('PlanViews', () => {
       }
 
       // When
-      const { container } = render(<PlanStatusbar {...props} />)
+      const { getByText } = render(<PlanStatusbar {...props} />)
 
       // Then
-      expect(container).toMatchSnapshot()
+      expect(getByText(/xx0/))
+      expect(getByText(/xx1/))
+      expect(getByText(/xx2/))
+      expect(getByText(/xx3/))
     })
   })
 })

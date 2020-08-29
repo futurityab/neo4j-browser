@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,20 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { IESecurityError18 } from './Errors/IESecurityErrors'
-
-const error = (title, message) => ({
+const error = title => ({
   title,
-  message: message || title
+  message: title
 })
-
-const knownErrors = {
-  18: IESecurityError18
-}
 
 export const errorMessageFormater = (code, message) => {
   const title = `${code || code === 0 ? code : ''}${
     code && message ? ': ' : ''
   }${message || ''}`
-  return error(title, knownErrors[code])
+  return error(title)
 }

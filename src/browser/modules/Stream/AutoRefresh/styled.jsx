@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -29,18 +29,14 @@ export const StatusbarWrapper = styled.div`
 export const StyledStatusBar = styled.div`
   min-height: 39px;
   line-height: 39px;
-  color: #788185;
-  background-color: #fff;
   white-space: nowrap;
   font-size: 13px;
+  color: ${props => props.theme.secondaryText};
   position: relative;
-  float: right;
   overflow: hidden;
-  border-top: 1px solid #e6e9ef;
-  margin-bottom: -39px;
-  padding-left: 16px;
   margin-top: 0;
   width: 100%;
+  padding-left: 24px;
 `
 
 export const RefreshQueriesButton = styled(FrameButton)`
@@ -49,7 +45,7 @@ export const RefreshQueriesButton = styled(FrameButton)`
 
 export const AutoRefreshSpan = styled.span`
   float: right;
-  margin-right: 5px;
+  margin-right: 10px;
 `
 
 const ToggleLabel = styled.label`
@@ -61,7 +57,7 @@ export const AutoRefreshToggle = props => {
     <ToggleLabel>
       AUTO-REFRESH &nbsp;
       <input
-        type='checkbox'
+        type="checkbox"
         checked={props.checked}
         onChange={props.onChange}
         className={styles['toggle-check-input']}

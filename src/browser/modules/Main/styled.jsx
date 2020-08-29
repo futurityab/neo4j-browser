@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -47,10 +47,11 @@ export const Banner = styled.div`
   min-height: 49px;
   color: white;
   padding: 0 24px;
-  margin: 0 24px;
   overflow: hidden;
   animation: ${grow('49px')} 0.3s ease-in;
   flex: 0 0 49px;
+  box-shadow: 0px 0px 2px rgba(52, 58, 67, 0.1),
+    0px 1px 2px rgba(52, 58, 67, 0.08), 0px 1px 4px rgba(52, 58, 67, 0.08);
 `
 
 export const ErrorBanner = styled(Banner)`
@@ -70,6 +71,14 @@ export const StyledCodeBlockAuthBar = styled(StyledCodeBlock)`
 export const StyledCodeBlockErrorBar = styled(StyledCodeBlock)`
   background-color: white;
   color: ${props => props.theme.error};
+`
+export const StyledCodeBlockFrame = styled(StyledCodeBlock)`
+  white-space: nowrap;
+  overflow: hidden;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+  cursor: pointer;
 `
 
 export const SyncDisconnectedBanner = styled(Banner)`

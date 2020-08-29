@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import canvg from 'canvg'
+
 import { prepareForExport } from './svgUtils'
 import FileSaver from 'file-saver'
 
@@ -25,20 +27,19 @@ export const downloadPNGFromSVG = (svg, graph, type) => {
   const svgObj = prepareForExport(svg, graph, type)
   const svgData = htmlCharacterRefToNumericalRef(svgObj.node())
 
-  let canvas
-  canvas = document.createElement('canvas')
+  const canvas = document.createElement('canvas')
   canvas.width = svgObj.attr('width')
   canvas.height = svgObj.attr('height')
 
-  window.canvg(canvas, svgData)
-  return downloadWithDataURI(type + '.png', canvas.toDataURL('image/png'))
+  canvg(canvas, svgData)
+  return downloadWithDataURI(`${type}.png`, canvas.toDataURL('image/png'))
 }
 
 export const downloadSVG = (svg, graph, type) => {
   const svgObj = prepareForExport(svg, graph, type)
   const svgData = htmlCharacterRefToNumericalRef(svgObj.node())
 
-  return download(type + '.svg', 'image/svg+xml;charset=utf-8', svgData)
+  return download(`${type}.svg`, 'image/svg+xml;charset=utf-8', svgData)
 }
 
 const htmlCharacterRefToNumericalRef = node =>
@@ -52,18 +53,18 @@ const download = (filename, mime, data) => {
 }
 
 const downloadWithDataURI = (filename, dataURI) => {
-  var byteString, i, ia, j, mimeString, ref
+  let byteString, i, j, ref
   byteString = null
   if (dataURI.split(',')[0].indexOf('base64') >= 0) {
     byteString = window.atob(dataURI.split(',')[1])
   } else {
     byteString = unescape(dataURI.split(',')[1])
   }
-  mimeString = dataURI
+  const mimeString = dataURI
     .split(',')[0]
     .split(':')[1]
     .split(';')[0]
-  ia = new Uint8Array(byteString.length)
+  const ia = new Uint8Array(byteString.length)
   for (
     i = j = 0, ref = byteString.length;
     ref >= 0 ? j <= ref : j >= ref;

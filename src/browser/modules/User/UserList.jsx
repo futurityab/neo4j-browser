@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -22,6 +22,7 @@ import { executeCommand } from 'shared/modules/commands/commandsDuck'
 import React, { Component } from 'react'
 import uuid from 'uuid'
 import { withBus } from 'react-suber'
+import { map } from 'lodash-es'
 import {
   listUsersQuery,
   listRolesQuery
@@ -33,77 +34,138 @@ import { StyledLink } from 'browser-components/buttons'
 import { StyledTable, StyledTh } from 'browser-components/DataTables'
 import { StyledButtonContainer } from './styled'
 
-import FrameTemplate from '../Stream/FrameTemplate'
+import FrameTemplate from '../Frame/FrameTemplate'
 import { forceFetch } from 'shared/modules/currentUser/currentUserDuck'
 import { NEO4J_BROWSER_USER_ACTION_QUERY } from 'services/bolt/txMetadata'
+import { driverDatabaseSelection } from 'shared/modules/features/versionedFeatures'
+import { connect } from 'react-redux'
+import { isEnterprise } from 'shared/modules/dbMeta/dbMetaDuck'
+import FrameAside from '../Frame/FrameAside'
+import { EnterpriseOnlyFrame } from 'browser-components/EditionView'
 
 export class UserList extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       userList: this.props.users || [],
       listRoles: this.props.roles || []
     }
   }
-  extractUserNameAndRolesFromBolt (result) {
-    let tableArray = bolt.recordsToTableArray(result.records)
+
+  componentDidMount() {
+    if (this.props.isEnterpriseEdition) {
+      this.getUserList()
+      this.getRoles()
+    }
+  }
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.frame.ts !== prevProps.frame.ts &&
+      this.props.frame.isRerun
+    ) {
+      if (this.props.isEnterpriseEdition) {
+        this.getUserList()
+        this.getRoles()
+      }
+    }
+  }
+
+  extractUserNameAndRolesFromBolt(result) {
+    const tableArray = bolt.recordsToTableArray(result.records)
     tableArray.shift()
     return tableArray
   }
-  getUserList () {
+
+  recordToUserObject = record => {
+    const is40 = Boolean(this.props.useSystemDb)
+
+    if (is40) {
+      return {
+        username: record.get('user'),
+        roles: record.get('roles'),
+        active: !record.get('suspended'),
+        passwordChangeRequired: record.get('passwordChangeRequired')
+      }
+    }
+
+    return {
+      username: record.get('username'),
+      roles: record.get('roles'),
+      active: !record.get('flags').includes('is_suspended'),
+      passwordChangeRequired: record
+        .get('flags')
+        .includes('password_change_required')
+    }
+  }
+
+  getUserList() {
     this.props.bus.self(
       CYPHER_REQUEST,
-      { query: listUsersQuery(), queryType: NEO4J_BROWSER_USER_ACTION_QUERY },
+      {
+        query: listUsersQuery(Boolean(this.props.useSystemDb)),
+        queryType: NEO4J_BROWSER_USER_ACTION_QUERY,
+        useDb: this.props.useSystemDb
+      },
       response => {
         if (response.success) {
           this.setState({
-            userList: this.extractUserNameAndRolesFromBolt(response.result)
+            userList: map(response.result.records, this.recordToUserObject)
           })
           this.props.bus.send(forceFetch().type, forceFetch())
         }
       }
     )
   }
-  getRoles () {
+
+  getRoles() {
     this.props.bus.self(
       CYPHER_REQUEST,
-      { query: listRolesQuery(), queryType: NEO4J_BROWSER_USER_ACTION_QUERY },
+      {
+        query: listRolesQuery(Boolean(this.props.useSystemDb)),
+        queryType: NEO4J_BROWSER_USER_ACTION_QUERY,
+        useDb: this.props.useSystemDb
+      },
       response => {
-        const flatten = arr =>
-          arr.reduce((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), [])
         if (response.success) {
           this.setState({
-            listRoles: flatten(
-              this.extractUserNameAndRolesFromBolt(response.result)
+            listRoles: map(response.result.records, record =>
+              record.get('role')
             )
           })
         }
       }
     )
   }
-  makeTable (data) {
+
+  makeTable(data) {
+    const tableHeaderValues = {
+      username: 'Username',
+      roles: 'Add Role',
+      'current-roles': 'Current Roles(s)',
+      status: 'Status',
+      'status-action': 'Action',
+      'password-change': 'Password Change',
+      delete: 'Delete'
+    }
+
     const items = data.map(row => {
       return (
         <UserInformation
-          className='user-information'
+          className="user-information"
           key={uuid.v4()}
-          username={row[0]}
-          roles={row[1]}
-          status={row[2]}
+          user={row}
           refresh={this.getUserList.bind(this)}
           availableRoles={this.state.listRoles}
         />
       )
     })
-    const tableHeaders = [
-      'Username',
-      'Add Role',
-      'Current Roles(s)',
-      'Status',
-      'Password Change',
-      'Delete'
-    ].map((heading, i) => {
-      return <StyledTh key={i}>{heading}</StyledTh>
+
+    const tableHeaders = Object.keys(tableHeaderValues).map((id, key) => {
+      return (
+        <StyledTh key={`${id}-${key}`} id={id}>
+          {tableHeaderValues[id]}
+        </StyledTh>
+      )
     })
     return (
       <StyledTable>
@@ -126,24 +188,45 @@ export class UserList extends Component {
     )
   }
 
-  openAddNewUserFrame () {
+  openAddNewUserFrame() {
     const action = executeCommand(':server user add')
     this.props.bus.send(action.type, action)
   }
 
-  componentWillMount () {
-    this.getUserList()
-    this.getRoles()
-  }
-  render () {
-    const renderedListOfUsers = this.state.userList
-      ? this.makeTable(this.state.userList)
-      : 'No users'
-    const frameContents = (
-      <div className='db-list-users'>{renderedListOfUsers}</div>
+  render() {
+    let aside = null
+    let frameContents
+    if (!this.props.isEnterpriseEdition) {
+      aside = (
+        <FrameAside
+          title="Frame unavailable"
+          subtitle="What edition are you running?"
+        />
+      )
+      frameContents = <EnterpriseOnlyFrame command={this.props.frame.cmd} />
+    } else {
+      const renderedListOfUsers = this.state.userList
+        ? this.makeTable(this.state.userList)
+        : 'No users'
+      frameContents = <>{renderedListOfUsers}</>
+    }
+    return (
+      <FrameTemplate
+        header={this.props.frame}
+        contents={frameContents}
+        aside={aside}
+      />
     )
-    return <FrameTemplate header={this.props.frame} contents={frameContents} />
+  }
+}
+const mapStateToProps = state => {
+  const { database } = driverDatabaseSelection(state, 'system') || {}
+  const isEnterpriseEdition = isEnterprise(state)
+
+  return {
+    useSystemDb: database,
+    isEnterpriseEdition
   }
 }
 
-export default withBus(UserList)
+export default withBus(connect(mapStateToProps, null)(UserList))

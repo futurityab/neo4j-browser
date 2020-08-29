@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -23,11 +23,14 @@ const webpack = require('webpack')
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin
+const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin')
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
 const manifestGeneration = require('./generate-manifest-helpers')
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
 module.exports = () => {
   const plugins = [
@@ -60,10 +63,6 @@ module.exports = () => {
       {
         from: path.resolve(helpers.browserPath, 'images'),
         to: helpers.assetsPath + '/images'
-      },
-      {
-        from: path.resolve(helpers.browserPath, 'external/canvg'),
-        to: helpers.assetsPath + '/js/canvg'
       }
     ]),
     new MiniCssExtractPlugin({
@@ -81,20 +80,24 @@ module.exports = () => {
       analyzerMode: 'static',
       openAnalyzer: false,
       reportFilename: './../bundle-report.html'
+    }),
+    new ForkTsCheckerWebpackPlugin({
+      eslint: {
+        files: './src/**/*.{ts,tsx,js,jsx}'
+      }
+    }),
+    new ForkTsCheckerNotifierWebpackPlugin({
+      title: 'TypeScript',
+      excludeWarnings: false
     })
   ]
 
   if (!helpers.isProduction) {
     plugins.push(new webpack.HotModuleReplacementPlugin())
+    plugins.push(new ReactRefreshWebpackPlugin())
   }
   if (helpers.isProduction) {
-    plugins.unshift(
-      new CleanWebpackPlugin([helpers.buildPath], {
-        root: helpers.projectPath,
-        verbose: false,
-        dry: false
-      })
-    )
+    plugins.unshift(new CleanWebpackPlugin())
   }
   return plugins
 }

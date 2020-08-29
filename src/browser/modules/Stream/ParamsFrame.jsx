@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -23,31 +23,28 @@ import { ExclamationTriangleIcon } from 'browser-components/icons/Icons'
 import Ellipsis from 'browser-components/Ellipsis'
 import { stringModifier } from 'services/bolt/cypherTypesFormatting'
 import { stringifyMod } from 'services/utils'
-import FrameTemplate from './FrameTemplate'
+import FrameTemplate from '../Frame/FrameTemplate'
 import { PaddedDiv, ErrorText, SuccessText, StyledStatsBar } from './styled'
 import { applyGraphTypes } from 'services/bolt/boltMappings'
-import ClickToCode from 'browser/modules/ClickToCode'
+import AutoExecButton from './auto-exec-button'
 
 const ParamsFrame = ({ frame }) => {
   const params = applyGraphTypes(frame.params)
   const contents = (
     <PaddedDiv>
       <Render if={frame.success !== false}>
-        <pre data-testid='rawParamData'>
+        <pre data-testid="rawParamData">
           {stringifyMod(params, stringModifier, true)}
         </pre>
       </Render>
       <div style={{ marginTop: '20px' }}>
-        See{' '}
-        <ClickToCode code=':help param' execute>
-          :help param
-        </ClickToCode>{' '}
-        for usage of the <code>:param</code> command.
+        See <AutoExecButton cmd="help param" /> for usage of the{' '}
+        <code>:param</code> command.
       </div>
     </PaddedDiv>
   )
   const statusbar =
-    typeof frame['success'] === 'undefined' ? null : (
+    typeof frame.success === 'undefined' ? null : (
       <StyledStatsBar>
         <Ellipsis>
           <Render if={frame.success === true}>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react'
-import FrameTemplate from '../FrameTemplate'
-import { StyledConnectionFrame, StyledConnectionAside } from './styled'
+import FrameTemplate from '../../Frame/FrameTemplate'
+import { StyledConnectionAside } from './styled'
 import { H3 } from 'browser-components/headers'
 import { Lead } from 'browser-components/Text'
 import Render from 'browser-components/Render'
@@ -29,7 +29,7 @@ const Disconnect = ({ frame, activeConnectionData }) => {
     <FrameTemplate
       header={frame}
       contents={
-        <StyledConnectionFrame>
+        <>
           <StyledConnectionAside>
             <Render if={activeConnectionData}>
               <div>
@@ -44,7 +44,7 @@ const Disconnect = ({ frame, activeConnectionData }) => {
               </div>
             </Render>
           </StyledConnectionAside>
-        </StyledConnectionFrame>
+        </>
       }
     />
   )

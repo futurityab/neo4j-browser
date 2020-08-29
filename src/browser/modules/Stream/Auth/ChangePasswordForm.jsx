@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -19,40 +19,58 @@
  */
 
 import React, { Component } from 'react'
+import faker from 'faker'
 import { FormButton } from 'browser-components/buttons'
 import {
-  StyledConnectionForm,
   StyledConnectionTextInput,
   StyledConnectionLabel,
-  StyledConnectionFormEntry
+  StyledConnectionFormEntry,
+  StyledChangePasswordForm
 } from './styled'
 import Render from 'browser-components/Render'
 import InputEnterStepping from 'browser-components/InputEnterStepping/InputEnterStepping'
+import RevealablePasswordInput from './revealable-password-input'
 
 export default class ChangePasswordForm extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       password: '',
       newPassword: '',
-      newPassword2: ''
+      newPassword2: '',
+      revealNewPassword: false
     }
   }
+
   onExistingPasswordChange = event => {
     const password = event.target.value
-    this.setState({ password, error: {} }, () => this.onChange())
+    this.setState({ password }, () => this.props.onChange())
   }
+
   onNewPasswordChange = event => {
     const newPassword = event.target.value
-    this.setState({ newPassword, error: {} }, () => this.onChange())
+    this.setState({ newPassword }, () => this.props.onChange())
   }
+
   onNewPasswordChange2 = event => {
     const newPassword2 = event.target.value
-    this.setState({ newPassword2, error: {} }, () => this.onChange())
+    this.setState({ newPassword2 }, () => this.props.onChange())
   }
-  onChange = () => {
-    this.props.onChange(this.state.newPassword, this.state.newPassword2)
+
+  onSuggestPassword = () => {
+    const suggestedPassword = `${faker.random.words(3)} ${faker.random.number(
+      100
+    )}`
+    this.setState({
+      newPassword: suggestedPassword,
+      newPassword2: suggestedPassword,
+      revealNewPassword: true
+    })
   }
+
+  togglePasswordRevealed = () =>
+    this.setState(state => ({ revealNewPassword: !state.revealNewPassword }))
+
   validateSame = () => {
     if (
       this.state.newPassword &&
@@ -73,9 +91,9 @@ export default class ChangePasswordForm extends Component {
           this.props.onChangePasswordClick({
             newPassword: this.state.newPassword
           })
-          return
+        } else {
+          this.props.onChangePasswordClick(res)
         }
-        this.props.onChangePasswordClick(res)
       })
     } else {
       this.props.onChangePasswordClick({
@@ -83,10 +101,16 @@ export default class ChangePasswordForm extends Component {
       })
     }
   }
-  render () {
+
+  render() {
     const indexStart = this.props.showExistingPasswordInput ? 1 : 0
+    const { isLoading } = this.props
+    const classNames = []
+    if (isLoading) {
+      classNames.push('isLoading')
+    }
     return (
-      <StyledConnectionForm>
+      <StyledChangePasswordForm className={classNames.join(' ')}>
         <InputEnterStepping
           steps={this.props.showExistingPasswordInput ? 3 : 2}
           submitAction={this.validateSame}
@@ -96,7 +120,7 @@ export default class ChangePasswordForm extends Component {
             setRefForIndex
           }) => {
             return (
-              <React.Fragment>
+              <>
                 <Render if={this.props.showExistingPasswordInput}>
                   <StyledConnectionFormEntry>
                     <StyledConnectionLabel>
@@ -108,48 +132,63 @@ export default class ChangePasswordForm extends Component {
                         type: 'password',
                         onChange: this.onExistingPasswordChange,
                         value: this.state.password,
-                        ref: ref => setRefForIndex(0, ref)
+                        ref: ref => setRefForIndex(0, ref),
+                        disabled: isLoading
                       })}
                     />
                   </StyledConnectionFormEntry>
                 </Render>
                 <StyledConnectionFormEntry>
                   <StyledConnectionLabel>New password</StyledConnectionLabel>
-                  <StyledConnectionTextInput
+                  <RevealablePasswordInput
                     {...getInputPropsForIndex(indexStart, {
                       initialFocus: !this.props.showExistingPasswordInput,
                       'data-testid': 'newPassword',
                       type: 'password',
                       onChange: this.onNewPasswordChange,
                       value: this.state.newPassword,
-                      ref: ref => setRefForIndex(indexStart, ref)
+                      setRef: ref => setRefForIndex(indexStart, ref),
+                      disabled: isLoading,
+                      isRevealed: this.state.revealNewPassword,
+                      toggleReveal: this.togglePasswordRevealed
                     })}
                   />
+                  &nbsp;OR&nbsp;&nbsp;
+                  <FormButton tabIndex="-1" onClick={this.onSuggestPassword}>
+                    Generate
+                  </FormButton>
                 </StyledConnectionFormEntry>
                 <StyledConnectionFormEntry>
                   <StyledConnectionLabel>
                     Repeat new password
                   </StyledConnectionLabel>
-                  <StyledConnectionTextInput
+                  <RevealablePasswordInput
                     {...getInputPropsForIndex(indexStart + 1, {
                       'data-testid': 'newPasswordConfirmation',
                       type: 'password',
                       onChange: this.onNewPasswordChange2,
                       value: this.state.newPassword2,
-                      ref: ref => setRefForIndex(indexStart + 1, ref)
+                      setRef: ref => setRefForIndex(indexStart + 1, ref),
+                      disabled: isLoading,
+                      isRevealed: this.state.revealNewPassword,
+                      toggleReveal: this.togglePasswordRevealed
                     })}
                   />
                 </StyledConnectionFormEntry>
-                <FormButton
-                  data-testid='changePassword'
-                  label='Change password'
-                  {...getSubmitProps()}
-                />
-              </React.Fragment>
+                <Render if={!isLoading}>
+                  <FormButton
+                    data-testid="changePassword"
+                    label="Change password"
+                    disabled={isLoading}
+                    {...getSubmitProps()}
+                  />
+                </Render>
+                <Render if={isLoading}>Please wait...</Render>
+              </>
             )
           }}
         />
-      </StyledConnectionForm>
+      </StyledChangePasswordForm>
     )
   }
 }

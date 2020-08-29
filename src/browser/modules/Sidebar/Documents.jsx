@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -86,12 +86,11 @@ const getReferences = (version, v) => {
       command: `https://neo4j.com/docs/operations-manual/${v}/`,
       type: 'link'
     },
-    // Drivers manual needs to wait for the page to be published
-    // {
-    //   name: 'Drivers Manual',
-    //   command: `https://neo4j.com/docs/driver-manual/current/`,
-    //   type: 'link'
-    // },
+    {
+      name: 'Drivers Manual',
+      command: `https://neo4j.com/docs/driver-manual/current/`,
+      type: 'link'
+    },
     {
       name: 'Cypher Refcard',
       command: `https://neo4j.com/docs/cypher-refcard/${v}/`,
@@ -99,17 +98,22 @@ const getReferences = (version, v) => {
     },
     {
       name: 'GraphGists',
-      command: `https://neo4j.com/graphgists/`,
+      command: 'https://neo4j.com/graphgists/',
       type: 'link'
     },
     {
       name: 'Developer Site',
-      command: `https://www.neo4j.com/developer/`,
+      command: 'https://www.neo4j.com/developer/',
       type: 'link'
     },
     {
       name: 'Knowledge Base',
-      command: `https://neo4j.com/developer/kb/`,
+      command: 'https://neo4j.com/developer/kb/',
+      type: 'link'
+    },
+    {
+      name: 'Neo4j Browser Developer Pages',
+      command: 'https://neo4j.com/developer/neo4j-browser/',
       type: 'link'
     }
   ]
@@ -127,12 +131,12 @@ const getStaticItems = (version, urlVersion) => {
 const Documents = ({ version, urlVersion }) => {
   const items = getStaticItems(version, urlVersion)
   return (
-    <Drawer id='db-documents'>
-      <DrawerHeader>Documents</DrawerHeader>
+    <Drawer id="db-documents">
+      <DrawerHeader>Help &amp; Resources</DrawerHeader>
       <DrawerBody>
-        <DocumentItems header={'Introduction'} items={items.intro} />
-        <DocumentItems header={'Help'} items={items.help} />
-        <DocumentItems header={'Useful Resources'} items={items.reference} />
+        <DocumentItems header="Introduction" items={items.intro} />
+        <DocumentItems header="Help" items={items.help} />
+        <DocumentItems header="Useful Resources" items={items.reference} />
       </DrawerBody>
     </Drawer>
   )

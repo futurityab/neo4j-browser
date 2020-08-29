@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,19 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { isAura, isEnterpriseEdition } from '../support/utils'
+import { isMac } from '../../src/browser/modules/App/keyboardShortcuts'
+
 /* global Cypress, cy, test, expect, before */
 
 const Editor = '.ReactCodeMirror textarea'
 const Carousel = '[data-testid="carousel"]'
-const SubmitQueryButton = '[data-testid="submitQuery"]'
-const ClearEditorButton = '[data-testid="clearEditorContent"]'
+const SubmitQueryButton = isMac
+  ? '[data-testid="editorRun (⌘↩)"]'
+  : '[data-testid="editorRun (ctrl+enter)"]'
+const ClearEditorButton = '[data-testid="editor-discard"]'
 
 describe('Neo4j Browser', () => {
-  before(function () {
+  before(function() {
     cy.visit(Cypress.config('url'))
       .title()
       .should('include', 'Neo4j Browser')
-    cy.wait(5000)
+    cy.wait(3000)
   })
   it('sets new login credentials', () => {
     const newPassword = Cypress.config('password')
@@ -39,16 +44,18 @@ describe('Neo4j Browser', () => {
   })
   it('populates the editor when clicking the connect banner', () => {
     cy.get('[data-testid="disconnectedBannerCode"]').click()
-    cy.get('.ReactCodeMirror').should('contain', ':server connect')
-    cy.get(ClearEditorButton).click()
+    cy.get('[data-testid="frameCommand"]')
+      .first()
+      .should('contain', ':server connect')
+    cy.get(ClearEditorButton)
+      .click()
+      .should('not.exist')
   })
   it('can connect', () => {
     const password = Cypress.config('password')
-    cy.connect(
-      'neo4j',
-      password
-    )
+    cy.connect('neo4j', password)
   })
+
   it('can empty the db', () => {
     cy.executeCommand(':clear')
     const query = 'MATCH (n) DETACH DELETE n'
@@ -111,59 +118,75 @@ describe('Neo4j Browser', () => {
   })
   it('can display meta items from side drawer', () => {
     cy.executeCommand(':clear')
-    cy.get('[data-testid="drawerDB"]').click()
+    cy.get('[data-testid="drawerDBMS"]').click()
     cy.get('[data-testid="sidebarMetaItem"]', { timeout: 30000 }).should(p => {
       expect(p).to.have.length.above(17)
     })
-    cy.get('[data-testid="drawerDB"]').click()
+    cy.get('[data-testid="drawerDBMS"]').click()
   })
   it('displays user info in sidebar (when connected)', () => {
     cy.executeCommand(':clear')
-    cy.get('[data-testid="drawerDB"]').click()
+    cy.get('[data-testid="drawerDBMS"]').click()
     cy.get('[data-testid="user-details-username"]').should('contain', 'neo4j')
-    cy.get('[data-testid="user-details-roles"]').should('contain', 'admin')
+    cy.get('[data-testid="user-details-roles"]', { timeout: 30000 }).should(
+      'contain',
+      isAura()
+        ? 'PUBLIC'
+        : isEnterpriseEdition() || Cypress.config('serverVersion') < 4.0
+        ? 'admin'
+        : '-'
+    )
     cy.executeCommand(':clear')
     cy.executeCommand(':server disconnect')
     cy.get('[data-testid="user-details-username"]').should('have.length', 0)
     cy.get('[data-testid="user-details-roles"]').should('have.length', 0)
-    cy.connect(
-      'neo4j',
-      Cypress.config('password')
-    )
+    cy.connect('neo4j', Cypress.config('password'))
     cy.executeCommand(':clear')
     cy.get('[data-testid="user-details-username"]').should('contain', 'neo4j')
-    cy.get('[data-testid="user-details-roles"]').should('contain', 'admin')
-    cy.get('[data-testid="drawerDB"]').click()
+    cy.get('[data-testid="user-details-roles"]').should(
+      'contain',
+      isAura()
+        ? 'PUBLIC'
+        : isEnterpriseEdition() || Cypress.config('serverVersion') < 4.0
+        ? 'admin'
+        : '-'
+    )
+    cy.get('[data-testid="drawerDBMS"]').click()
   })
-  it('will clear local storage when clicking "Clear local data"', () => {
-    const scriptName = 'foo'
-    cy.get(Editor).type(`//${scriptName}`, { force: true })
-    cy.get('[data-testid="editorFavorite"]').click()
 
-    cy.get('[data-testid="drawerFavorites"]').click()
-    cy.get('[data-testid="sidebarFavoriteItem"]')
-      .first()
-      .should('be', scriptName)
+  // Browser sync is disabled on Aura
+  if (!isAura()) {
+    it('will clear local storage when clicking "Clear local data"', () => {
+      const scriptName = 'foo'
+      cy.get(Editor).type(`//${scriptName}`, { force: true })
+      cy.get('[data-testid="editorFavorite"]').click()
 
-    cy.get('[data-testid="drawerSync"]').click()
-    cy.get('[data-testid="clearLocalData"]').click()
-    cy.wait(500)
+      cy.get('[data-testid="drawerFavorites"]').click()
+      cy.get('.saved-scripts-list-item')
+        .first()
+        .should('be', scriptName)
 
-    // confirm clear
-    cy.get('[data-testid="clearLocalData"]').click()
+      cy.get('[data-testid="drawerSync"]').click()
+      cy.get('[data-testid="clearLocalData"]').click()
+      cy.wait(500)
 
-    cy.get('[data-testid="drawerFavorites"]').click()
-    cy.get('[data-testid="sidebarFavoriteItem"]').should('have.length', 0)
-    cy.get('[data-testid="drawerFavorites"]').click()
+      // confirm clear
+      cy.get('[data-testid="clearLocalData"]').click()
 
-    // once data is cleared the user is logged out and the connect form is displayed
-    cy.get('input[data-testid="boltaddress"]')
-  })
+      cy.get('[data-testid="drawerFavorites"]').click()
+      cy.get('.saved-scripts-list-item').should('have.length', 0)
+      cy.get('[data-testid="drawerFavorites"]').click()
+
+      // once data is cleared the user is logged out and the connect form is displayed
+      cy.get('input[data-testid="boltaddress"]')
+    })
+  }
   it('displays no user info in sidebar (when not connected)', () => {
+    cy.executeCommand(':server disconnect')
     cy.executeCommand(':clear')
-    cy.get('[data-testid="drawerDB"]').click()
+    cy.get('[data-testid="drawerDBMS"]').click()
     cy.get('[data-testid="user-details-username"]').should('have.length', 0)
     cy.get('[data-testid="user-details-roles"]').should('have.length', 0)
-    cy.get('[data-testid="drawerDB"]').click()
+    cy.get('[data-testid="drawerDBMS"]').click()
   })
 })

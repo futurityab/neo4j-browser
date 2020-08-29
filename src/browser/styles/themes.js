@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -23,20 +23,22 @@ import {
   OUTLINE_THEME,
   DARK_THEME
 } from 'shared/modules/settings/settingsDuck'
+import { rgb } from 'd3'
 
 export const base = {
   name: 'base',
   // Text colors
   primaryText: '#333',
   secondaryText: '#717172',
-  inputText: '#717172',
+  inputText: '#222',
   headerText: '#333',
-  asideText: '#666',
+  asideText: '#292C33',
   link: '#428BCA',
   linkHover: '#5dade2',
   editorCommandColor: '#333',
   topicText: '#428BCA',
   preText: '#333',
+  promptText: '#c0c2c5',
 
   // Backgrounds
   primaryBackground: '#D2D5DA',
@@ -47,13 +49,16 @@ export const base = {
   topicBackground: '#f8f8f8',
   preBackground: '#f5f5f5',
   alteringTableRowBackground: '#f5f5f5',
+  frameCommandBackground: '#F8F9FB',
+  runnableBackground: '#f5f5f5',
 
   // Fonts
   primaryFontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
   drawerHeaderFontFamily:
     "'Open Sans', 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif",
   streamlineFontFamily: 'streamline',
-  editorFont: '"Inconsolata", "Monaco", "Lucida Console", Courier, monospace;',
+  editorFont:
+    '"Fira Code", "Monaco", "Lucida Console", Courier, monospace !important;',
 
   // Headers
   primaryHeaderText: '#fff',
@@ -61,19 +66,19 @@ export const base = {
   // User feedback colors
   success: '#65B144',
   error: '#E74C3C',
-  warning: '#FD952C',
+  warning: '#ffaf00',
   auth: '#428BCA',
   info: '#428BCA',
 
   // Buttons
   primaryButtonText: '#fff',
-  primaryButtonBackground: '#008cc1',
-  secondaryButtonText: '#717172',
-  secondaryButtonBorder: '1px solid #717172',
+  primaryButtonBackground: '#428BCA',
+  secondaryButtonText: '#888',
+  secondaryButtonBorder: '1px solid #888',
   secondaryButtonBackground: 'transparent',
   secondaryButtonTextHover: '#fff',
-  secondaryButtonBorderHover: '1px solid #717172',
-  secondaryButtonBackgroundHover: '#717172',
+  secondaryButtonBorderHover: '1px solid #888',
+  secondaryButtonBackgroundHover: '#888',
   formButtonBorder: '1px solid #ccc',
   formButtonBorderHover: '1px solid ##adadad',
   formButtonBackgroundHover: '#e6e6e6',
@@ -113,31 +118,35 @@ export const dark = {
   headerText: '#f4f4f4',
   primaryHeaderText: '#f4f4f4',
   editorCommandColor: '#1abc9c',
-  link: '#f4f4f4',
+  link: '#5CA6D9',
   topicText: '#fff',
   preText: '#fff',
+  asideText: rgb(255, 255, 255, 0.87),
 
   // Backgrounds
-  primaryBackground: '#282c32',
-  secondaryBackground: '#5a6070',
-  editorBarBackground: '#5a6070',
-  editorBackground: '#282c32',
+  primaryBackground: '#525865',
+  secondaryBackground: '#292C33',
+  editorBarBackground: 'transparent',
+  editorBackground: '#121212',
   drawerBackground: '#30333a',
-  frameSidebarBackground: '#5a6070',
+  frameSidebarBackground: '#31333B',
   topicBackground: 'transparent',
   preBackground: '#282c32',
-  alteringTableRowBackground: '#282c32',
+  alteringTableRowBackground: '#30333a',
+
+  frameCommandBackground: '#31333B',
+  runnableBackground: '#202226',
 
   // Buttons
   primaryButtonText: '#fff',
-  primaryButtonBackground: '#008cc1',
+  primaryButtonBackground: '#428BCA',
   secondaryButtonText: '#f4f4f4',
-  secondaryButtonBorder: '1px solid #717172',
+  secondaryButtonBorder: '1px solid #888',
   secondaryButtonBackground: 'transparent',
   secondaryButtonTextHover: '#f4f4f4',
-  secondaryButtonBorderHover: '1px solid #717172',
-  secondaryButtonBackgroundHover: '#282c32',
+  secondaryButtonBorderHover: '1px solid #888',
+  secondaryButtonBackgroundHover: '#4D4A57',
 
   // Borders
-  inFrameBorder: '1px solid #f4f4f4'
+  inFrameBorder: '1px solid rgba(255,255,255,0.12)'
 }

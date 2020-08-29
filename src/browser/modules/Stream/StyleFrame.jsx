@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -19,13 +19,9 @@
  */
 import React from 'react'
 import { connect } from 'react-redux'
-import FrameTemplate from './FrameTemplate'
-import {
-  PaddedDiv,
-  StyledOneRowStatsBar,
-  StyledRightPartial,
-  FrameTitlebarButtonSection
-} from './styled'
+import FrameTemplate from '../Frame/FrameTemplate'
+import { PaddedDiv, StyledOneRowStatsBar, StyledRightPartial } from './styled'
+import { StyledFrameTitlebarButtonSection } from 'browser/modules/Frame/styled'
 import { FrameButton } from 'browser-components/buttons'
 import { objToCss } from 'services/grassUtils'
 import {
@@ -40,9 +36,9 @@ const StyleFrame = ({ frame }) => {
   let grass = ''
   let contents = (
     <InfoView
-      title='No styles yet'
-      description='No style generated or set yet. Run a query and return a few nodes and
-    relationships to generate some styling.'
+      title="No styles yet"
+      description="No style generated or set yet. Run a query and return a few nodes and
+    relationships to generate some styling."
     />
   )
   if (frame.result) {
@@ -71,14 +67,14 @@ const StyleStatusbar = ({ resetStyleAction, rerunAction, onResetClick }) => {
   return (
     <StyledOneRowStatsBar>
       <StyledRightPartial>
-        <FrameTitlebarButtonSection>
+        <StyledFrameTitlebarButtonSection>
           <FrameButton
-            data-testid='styleResetButton'
+            data-testid="styleResetButton"
             onClick={() => onResetClick(resetStyleAction, rerunAction)}
           >
-            <FireExtinguisherIcon title='Reset style' />
+            <FireExtinguisherIcon title="Reset style" />
           </FrameButton>
-        </FrameTitlebarButtonSection>
+        </StyledFrameTitlebarButtonSection>
       </StyledRightPartial>
     </StyledOneRowStatsBar>
   )
@@ -87,7 +83,9 @@ const StyleStatusbar = ({ resetStyleAction, rerunAction, onResetClick }) => {
 const mapStateToProps = (state, ownProps) => {
   return {
     resetStyleAction: executeSystemCommand(`${getCmdChar(state)}style reset`),
-    rerunAction: executeCommand(ownProps.frame.cmd, ownProps.frame.id)
+    rerunAction: executeCommand(ownProps.frame.cmd, {
+      id: ownProps.frame.id
+    })
   }
 }
 const mapDispatchToProps = dispatch => ({

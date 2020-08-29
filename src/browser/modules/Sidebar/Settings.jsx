@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -59,6 +59,13 @@ const visualSettings = [
             actions.OUTLINE_THEME,
             actions.DARK_THEME
           ]
+        }
+      },
+      {
+        codeFontLigatures: {
+          displayName: 'Code font ligatures',
+          tooltip: 'Use font ligatures for the command bar and cypher snippets',
+          type: 'checkbox'
         }
       },
       {
@@ -177,26 +184,31 @@ export const Settings = ({
     const mapSettings = visualSetting.settings
       .map(settingObj => {
         const setting = Object.keys(settingObj)[0]
-        if (typeof settings[setting] === 'undefined') return false
+        if (typeof settings[setting] === 'undefined') return null
         const visual = settingObj[setting].displayName
         const tooltip = settingObj[setting].tooltip || ''
+        const type = settingObj[setting].type || 'input'
 
-        if (!settingObj[setting].type || settingObj[setting].type === 'input') {
+        if (type === 'input') {
           return (
             <StyledSetting key={toKeyString(visual)}>
-              <StyledSettingLabel title={tooltip}>{visual}</StyledSettingLabel>
-              <StyledSettingTextInput
-                onChange={event => {
-                  settings[setting] = event.target.value
-                  onSettingsSave(settings)
-                }}
-                defaultValue={settings[setting]}
-                title={[tooltip]}
-                className={setting}
-              />
+              <StyledSettingLabel title={tooltip}>
+                {visual}
+                <StyledSettingTextInput
+                  onChange={event => {
+                    settings[setting] = event.target.value
+                    onSettingsSave(settings)
+                  }}
+                  defaultValue={settings[setting]}
+                  title={[tooltip]}
+                  className={setting}
+                />
+              </StyledSettingLabel>
             </StyledSetting>
           )
-        } else if (settingObj[setting].type === 'radio') {
+        }
+
+        if (type === 'radio') {
           return (
             <StyledSetting key={toKeyString(visual)}>
               <StyledSettingLabel title={tooltip}>{visual}</StyledSettingLabel>
@@ -210,23 +222,28 @@ export const Settings = ({
               />
             </StyledSetting>
           )
-        } else if (settingObj[setting].type === 'checkbox') {
+        }
+
+        if (type === 'checkbox') {
           return (
             <StyledSetting key={toKeyString(visual)}>
-              <CheckboxSelector
-                onChange={event => {
-                  settings[setting] = event.target.checked
-                  onSettingsSave(settings)
-                }}
-                checked={settings[setting]}
-                data-testid={setting}
-              />
-              <StyledSettingLabel title={tooltip}>{visual}</StyledSettingLabel>
+              <StyledSettingLabel title={tooltip}>
+                <CheckboxSelector
+                  onChange={event => {
+                    settings[setting] = event.target.checked
+                    onSettingsSave(settings)
+                  }}
+                  checked={settings[setting]}
+                  data-testid={setting}
+                />
+                {visual}
+              </StyledSettingLabel>
             </StyledSetting>
           )
         }
       })
-      .filter(setting => setting !== false)
+      .filter(setting => setting !== null)
+
     return (
       <React.Fragment key={toKeyString(visualSetting.title)}>
         {title}
@@ -258,23 +275,24 @@ export const Settings = ({
       )
     })
     .filter(r => r)
+
   return (
-    <Drawer id='db-settings'>
+    <Drawer id="db-settings">
       <DrawerHeader>Browser Settings</DrawerHeader>
       <DrawerBody>
         <DrawerSection>
-          <DrawerSectionBody key='settings'>{mappedSettings}</DrawerSectionBody>
+          <DrawerSectionBody key="settings">{mappedSettings}</DrawerSectionBody>
           <FeatureToggle
             name={experimentalFeatureSelfName}
             on={
-              <React.Fragment>
+              <>
                 {mappedExperimentalFeatures.length ? (
                   <DrawerSubHeader>Experimental features</DrawerSubHeader>
                 ) : null}
-                <DrawerSectionBody key='experimental-features'>
+                <DrawerSectionBody key="experimental-features">
                   {mappedExperimentalFeatures}
                 </DrawerSectionBody>
-              </React.Fragment>
+              </>
             }
           />
         </DrawerSection>
@@ -306,7 +324,4 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Settings)
+export default connect(mapStateToProps, mapDispatchToProps)(Settings)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,41 +18,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react'
-import FrameTemplate from './FrameTemplate'
+import FrameTemplate from '../Frame/FrameTemplate'
 import * as e from 'services/exceptionMessages'
-import { createErrorObject } from 'services/exceptions'
+import { createErrorObject, UnknownCommandError } from 'services/exceptions'
 import { errorMessageFormater } from './errorMessageFormater'
 import {
   StyledCypherErrorMessage,
   StyledHelpContent,
-  StyledH4,
+  StyledErrorH4,
   StyledPreformattedArea,
   StyledHelpDescription,
   StyledDiv,
   StyledHelpFrame
 } from './styled'
+import AutoExecButton from './auto-exec-button'
 
 export const ErrorView = ({ frame }) => {
   if (!frame) return null
   const error = frame.error || false
   let errorContents = error.message || 'No error message found'
-  let errorCode = error.type || error.code || 'UndefinedError'
+  const errorCode = error.type || error.code || 'UndefinedError'
   if (!error.message && errorCode && typeof e[errorCode] !== 'undefined') {
     const eObj = createErrorObject(errorCode, error)
     errorContents = eObj.message
   }
-  const fullError = errorMessageFormater(errorCode, errorContents)
+  const fullError = errorMessageFormater(null, errorContents)
   return (
     <StyledHelpFrame>
       <StyledHelpContent>
         <StyledHelpDescription>
           <StyledCypherErrorMessage>ERROR</StyledCypherErrorMessage>
-          <StyledH4>{errorCode}</StyledH4>
+          <StyledErrorH4>{errorCode}</StyledErrorH4>
         </StyledHelpDescription>
         <StyledDiv>
           <StyledPreformattedArea>{fullError.message}</StyledPreformattedArea>
         </StyledDiv>
       </StyledHelpContent>
+      {frame.showHelpForCmd ? (
+        <>
+          Use <AutoExecButton cmd={`help ${frame.showHelpForCmd}`} /> for more
+          information.
+        </>
+      ) : null}
+      {errorCode === UnknownCommandError.name ? (
+        <>
+          Use <AutoExecButton cmd="help commands" /> to list available commands.
+        </>
+      ) : null}
     </StyledHelpFrame>
   )
 }

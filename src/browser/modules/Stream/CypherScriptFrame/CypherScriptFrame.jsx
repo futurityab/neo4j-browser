@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -20,28 +20,29 @@
 
 import { connect } from 'react-redux'
 import React, { Component } from 'react'
-import FrameTemplate from '../FrameTemplate'
+import FrameTemplate from '../../Frame/FrameTemplate'
 import { getRequest } from 'shared/modules/requests/requestsDuck'
 import { getFrame } from 'shared/modules/stream/streamDuck'
 import { StyledStatusSection } from 'browser-components/buttons'
 
-import { FrameTitlebarButtonSection } from 'browser/modules/Stream/styled'
+import { StyledFrameTitlebarButtonSection } from 'browser/modules/Frame/styled'
 import { WrapperCenter, ContentSizer, PointerFrameCommand } from './styled'
 import Accordion from 'browser-components/Accordion/Accordion'
 import { getCmdChar } from 'shared/modules/settings/settingsDuck'
 import { Summary, CypherSummary } from './Summary'
 import { Icon } from './Icon'
+import { getLatestFromFrameStack } from '../stream.utils'
 
 const isCypher = (str, cmdchar) => !str.startsWith(cmdchar)
 
 class CypherScriptFrame extends Component {
-  render () {
+  render() {
     const { frame, frames, requests = {}, cmdchar = ':' } = this.props
     const contents = (
       <WrapperCenter>
         <ContentSizer>
           <Accordion
-            data-testid='multi-statement-list'
+            data-testid="multi-statement-list"
             render={({ getChildProps }) => {
               return (
                 <div>
@@ -62,20 +63,20 @@ class CypherScriptFrame extends Component {
                     return (
                       <div key={id}>
                         <Accordion.Title
-                          data-testid='multi-statement-list-title'
+                          data-testid="multi-statement-list-title"
                           {...titleProps}
                         >
                           <PointerFrameCommand title={frames[id].cmd}>
                             {frames[id].cmd}
                           </PointerFrameCommand>
-                          <FrameTitlebarButtonSection>
+                          <StyledFrameTitlebarButtonSection>
                             <StyledStatusSection title={`Status: ${status}`}>
                               <Icon status={status} />
                             </StyledStatusSection>
-                          </FrameTitlebarButtonSection>
+                          </StyledFrameTitlebarButtonSection>
                         </Accordion.Title>
                         <Accordion.Content
-                          data-testid='multi-statement-list-content'
+                          data-testid="multi-statement-list-content"
                           {...contentProps}
                         >
                           <SummaryC
@@ -93,14 +94,20 @@ class CypherScriptFrame extends Component {
         </ContentSizer>
       </WrapperCenter>
     )
-    return <FrameTemplate header={frame} contents={contents} />
+    return (
+      <FrameTemplate
+        className="no-padding"
+        header={frame}
+        contents={contents}
+      />
+    )
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
   if (!ownProps.frame.statements) return {}
   const frames = ownProps.frame.statements
-    .map(id => getFrame(state, id))
+    .map(id => getLatestFromFrameStack(getFrame(state, id)))
     .reduce((all, curr) => {
       all[curr.id] = curr
       return all

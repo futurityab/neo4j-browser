@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -46,22 +46,15 @@ const StyledText = styled.div`
 `
 
 export class IconContainer extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       mouseover: false
     }
   }
-  render () {
-    const {
-      text,
-      regulateSize,
-      suppressIconStyles,
-      icon,
-      width,
-      title,
-      ...rest
-    } = this.props
+
+  render() {
+    const { text, regulateSize, icon, width, title, ...rest } = this.props
 
     const regulateSizeStyle = regulateSize
       ? { fontSize: regulateSize + 'em' }
@@ -69,7 +62,12 @@ export class IconContainer extends Component {
 
     const currentIcon = icon ? (
       <StyledIconWrapper {...rest}>
-        <SVGInline svg={icon} accessibilityLabel={title} width={width + 'px'} />
+        <SVGInline
+          cleanup={['title']}
+          svg={icon}
+          accessibilityLabel={title}
+          width={width + 'px'}
+        />
       </StyledIconWrapper>
     ) : (
       <StyledIconWrapper {...rest} style={regulateSizeStyle} />

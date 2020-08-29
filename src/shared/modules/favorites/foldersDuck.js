@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -17,7 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import uuid from 'uuid'
 
 import { APP_START, USER_CLEAR } from 'shared/modules/app/appDuck'
 import { getBrowserName } from 'services/utils'
@@ -44,8 +43,8 @@ const mergeFolders = (list1, list2) => {
   )
 }
 
-export const addFolder = () => {
-  return { type: ADD_FOLDER }
+export const addFolder = (id, name) => {
+  return { type: ADD_FOLDER, id, name }
 }
 export const updateFolders = folders => {
   return { type: UPDATE_FOLDERS, folders }
@@ -62,7 +61,7 @@ export const syncFolders = folders => {
   return { type: SYNC_FOLDERS, folders }
 }
 
-export default function reducer (state = initialState, action) {
+export default function reducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_FOLDERS:
     case UPDATE_FOLDERS:
@@ -72,7 +71,7 @@ export default function reducer (state = initialState, action) {
     case REMOVE_FOLDER:
       return state.filter(folder => folder.id !== action.id)
     case ADD_FOLDER:
-      return state.concat([{ id: uuid.v4(), name: 'Unnamed Folder' }])
+      return state.concat([{ id: action.id, name: action.name }])
     case USER_CLEAR:
       return initialState
     default:
@@ -86,7 +85,7 @@ export const composeFoldersToSync = (store, syncValue) => {
     fold => !fold.isStatic
   )
 
-  let newFolders = [
+  const newFolders = [
     {
       client: getBrowserName(),
       data: stateFolders,

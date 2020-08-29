@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -32,7 +32,7 @@ export const StyledTh = styled.th`
   text-align: left;
   height: 39px;
   font-weight: bold;
-  padding: 0 16px;
+  padding: 10px 16px 10px 0;
   line-height: 39px;
   border-bottom: ${props => props.theme.inFrameBorder};
 `
@@ -40,11 +40,11 @@ export const StyledTd = styled.td`
   border-bottom: ${props => props.theme.inFrameBorder};
   vertical-align: top;
   line-height: 26px;
-  padding: 0 16px;
+  padding: 10px 16px 10px 0;
 `
 
 export const StyledJsonPre = styled.pre`
-  background-color: ${props => props.theme.preBackground};
+  background-color: ${props => props.theme.runnableBackground};
   -webkit-border-radius: 5px;
   border-radius: 5px;
   margin: 20px 10px;
@@ -52,6 +52,6 @@ export const StyledJsonPre = styled.pre`
   color: ${props => props.theme.preText};
   line-height: 26px;
   padding: 2px 10px;
-  max-width: 320px;
-  white-space: pre-wrap;
+  max-width: 100%;
+  /*white-space: pre-line;*/
 `

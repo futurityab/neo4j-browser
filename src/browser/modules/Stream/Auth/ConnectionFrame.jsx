@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -20,33 +20,32 @@
 
 import React, { Component } from 'react'
 
-import FrameTemplate from '../FrameTemplate'
+import FrameTemplate from '../../Frame/FrameTemplate'
 import ConnectionForm from './ConnectionForm'
-import FrameError from '../FrameError'
+import FrameError from '../../Frame/FrameError'
 import { H3 } from 'browser-components/headers'
 import { Lead } from 'browser-components/Text'
 
 import Render from 'browser-components/Render'
-import {
-  StyledConnectionFrame,
-  StyledConnectionAside,
-  StyledConnectionBodyContainer
-} from './styled'
+import { StyledConnectionAside, StyledConnectionBodyContainer } from './styled'
 
 export class ConnectionFrame extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       error: {}
     }
   }
-  error (e) {
+
+  error(e) {
     this.setState({ error: e })
   }
-  success () {
+
+  success() {
     this.setState({ success: true })
   }
-  render () {
+
+  render() {
     return (
       <FrameTemplate
         header={this.props.frame}
@@ -57,21 +56,21 @@ export class ConnectionFrame extends Component {
           />
         }
         contents={
-          <StyledConnectionFrame>
+          <>
             <StyledConnectionAside>
               <Render if={!this.state.success}>
-                <div>
+                <React.Fragment>
                   <H3>Connect to Neo4j</H3>
                   <Lead>
-                    Database access requires an authenticated connection.
+                    Database access might require an authenticated connection.
                   </Lead>
-                </div>
+                </React.Fragment>
               </Render>
               <Render if={this.state.success}>
-                <div>
+                <React.Fragment>
                   <H3>Connected to Neo4j</H3>
                   <Lead>Nice to meet you.</Lead>
-                </div>
+                </React.Fragment>
               </Render>
             </StyledConnectionAside>
             <StyledConnectionBodyContainer>
@@ -81,7 +80,7 @@ export class ConnectionFrame extends Component {
                 error={this.error.bind(this)}
               />
             </StyledConnectionBodyContainer>
-          </StyledConnectionFrame>
+          </>
         }
       />
     )

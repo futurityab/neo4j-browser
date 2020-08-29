@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -51,9 +51,9 @@ export const StyledMainWrapper = styled.div`
   flex: auto;
   overflow: auto;
   padding: 0;
-  z-index: 1;
   height: auto;
   width: 0;
   background-color: ${props => props.theme.primaryBackground};
   color: ${props => props.theme.primaryText};
+  padding: 0 10px 0 10px;
 `

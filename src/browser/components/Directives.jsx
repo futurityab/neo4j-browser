@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -69,10 +69,6 @@ const directives = [
   }
 ]
 
-const prependHelpIcon = element => {
-  prependIcon(element, 'fa fa-question-circle-o')
-}
-
 const prependPlayIcon = element => {
   prependIcon(element, 'fa fa-play-circle-o')
 }
@@ -106,16 +102,15 @@ export const Directives = props => {
         const elems = elem.querySelectorAll(directive.selector)
         Array.from(elems).forEach(e => {
           if (e.firstChild.nodeName !== 'I') {
-            directive.selector === '[help-topic]'
-              ? prependHelpIcon(e)
-              : prependPlayIcon(e)
+            prependPlayIcon(e)
           }
 
           e.onclick = () => {
             addClass(e, 'clicked')
             return props.onItemClick(
               directive.valueExtractor(e),
-              directive.autoExec
+              directive.autoExec,
+              props.originFrameId
             )
           }
         })
@@ -128,10 +123,10 @@ export const Directives = props => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    onItemClick: (cmd, autoExec) => {
+    onItemClick: (cmd, autoExec, id) => {
       if (!cmd.endsWith(' null') && !cmd.endsWith(':null')) {
         if (autoExec) {
-          const action = executeCommand(cmd)
+          const action = executeCommand(cmd, { id })
           ownProps.bus.send(action.type, action)
         } else {
           ownProps.bus.send(editor.SET_CONTENT, editor.setContent(cmd))

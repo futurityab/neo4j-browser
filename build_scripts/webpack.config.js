@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -25,6 +25,9 @@ const helpers = require('./webpack-helpers')
 
 module.exports = {
   mode: helpers.isProduction ? 'production' : 'development',
+  node: {
+    fs: 'empty'
+  },
   entry: [path.resolve(helpers.browserPath, 'index.jsx')],
   output: {
     filename: 'app-[hash].js',
@@ -35,6 +38,7 @@ module.exports = {
   },
   plugins: getPlugins(),
   resolve: {
+    symlinks: false,
     alias: {
       'react-dom': '@hot-loader/react-dom',
       'src-root': path.resolve(helpers.sourcePath),
@@ -48,40 +52,53 @@ module.exports = {
       'browser-styles': path.resolve(helpers.browserPath, 'styles'),
       icons: path.resolve(helpers.browserPath, 'icons')
     },
-    extensions: ['.js', '.jsx']
+    extensions: ['.tsx', '.ts', '.js', '.jsx']
   },
   module: {
     rules
   },
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/](react|react-dom|@firebase|d3|codemirror)[\\/]/,
-          name: 'vendor',
-          chunks: 'all'
-        },
-        'cypher-codemirror': {
-          test: /[\\/]node_modules[\\/](cypher-codemirror|cypher-editor-support)[\\/]/,
-          name: 'cypher-codemirror',
-          chunks: 'all',
-          enforce: true
-        },
-        'neo4j-driver': {
-          test: /[\\/]node_modules[\\/](text-encoding|neo4j-driver)[\\/]/,
-          name: 'neo4j-driver',
-          chunks: 'all'
-        },
-        worker: {
-          test: /boltWorker/,
-          name: 'worker',
-          chunks: 'all',
-          enforce: true
+  optimization: helpers.isProduction
+    ? {
+        splitChunks: {
+          cacheGroups: {
+            vendor: {
+              test: /[\\/]node_modules[\\/](react|react-dom|@firebase|d3|codemirror)[\\/]/,
+              name: 'vendor',
+              chunks: 'all'
+            },
+            'cypher-codemirror': {
+              test: /[\\/]node_modules[\\/](cypher-codemirror|cypher-editor-support)[\\/]/,
+              name: 'cypher-codemirror',
+              chunks: 'all',
+              enforce: true
+            },
+            ui: {
+              test: /[\\/]node_modules[\\/](@relate-by-ui|semantic-ui-react)[\\/]/,
+              name: 'ui',
+              chunks: 'all',
+              enforce: true
+            },
+            'neo4j-driver': {
+              test: /[\\/]node_modules[\\/](text-encoding|neo4j-driver)[\\/]/,
+              name: 'neo4j-driver',
+              chunks: 'all',
+              enforce: true
+            },
+            worker: {
+              test: /boltWorker/,
+              name: 'worker',
+              chunks: 'all',
+              enforce: true
+            }
+          }
         }
       }
-    }
-  },
-  devtool: helpers.isProduction ? false : 'inline-source-map',
+    : {
+        removeAvailableModules: false,
+        removeEmptyChunks: false,
+        splitChunks: false
+      },
+  devtool: helpers.isProduction ? false : 'eval-cheap-module-source-map',
   devServer: {
     host: '0.0.0.0',
     port: 8080,

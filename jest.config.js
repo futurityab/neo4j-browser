@@ -1,4 +1,6 @@
 module.exports = {
+  // TypeScript files will be handled by ts-jest, and JavaScript files will be handled by babel-jest.
+  preset: 'ts-jest/presets/js-with-babel',
   testEnvironment: 'jest-environment-jsdom',
   setupFiles: [
     'raf/polyfill.js',
@@ -11,6 +13,9 @@ module.exports = {
     '/coverage/',
     '/dist/',
     '/node_modules/'
+  ],
+  transformIgnorePatterns: [
+    '/node_modules/(?!lodash-es|@neo4j/browser-lambda-parser|react-dnd|dnd-core)'
   ],
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga|html)$':
@@ -26,7 +31,8 @@ module.exports = {
   collectCoverageFrom: [
     '**/src/**/*.js',
     '**/src/**/*.jsx',
-    '!**/src/browser/external/**/*.js'
+    '**/src/**/*.ts',
+    '**/src/**/*.tsx'
   ],
   coverageThreshold: {
     global: {

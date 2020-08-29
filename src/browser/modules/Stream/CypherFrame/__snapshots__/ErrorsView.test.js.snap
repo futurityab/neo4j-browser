@@ -6,11 +6,11 @@ exports[`ErrorsViews ErrorsStatusbar displays error 1`] = `
     class="Ellipsis-sc-1dn9bou-0 gzqRPC"
   >
     <span
-      class="styled__ErrorText-sc-1dtvgs1-29 dMsRZb"
+      class="styled__ErrorText-sc-1dtvgs1-21 gSMage"
       title="Test.Error: Test error description"
     >
       <i
-        class="fa fa-exclamation-triangle IconContainer__I-sc-16whwc5-0 bXwiKG"
+        class="IconContainer__I-sc-16whwc5-0 bXwiKG fa fa-exclamation-triangle"
       />
        
       Test.Error: Test error description
@@ -26,42 +26,42 @@ exports[`ErrorsViews ErrorsView displays nothing if no errors 1`] = `<div />`;
 exports[`ErrorsViews ErrorsView displays procedure link if unknown procedure 1`] = `
 <div>
   <div
-    class="styled__StyledHelpFrame-sc-1dtvgs1-14 IJQaq"
+    class="styled__StyledHelpFrame-sc-1dtvgs1-5 THzmJ"
   >
     <div
-      class="styled__StyledHelpContent-sc-1dtvgs1-15 jPcVVC"
+      class="styled__StyledHelpContent-sc-1dtvgs1-6 NNcJM"
     >
       <div
-        class="styled__StyledHelpDescription-sc-1dtvgs1-16 buBBgk"
+        class="styled__StyledHelpDescription-sc-1dtvgs1-7 dlNdyW"
       >
         <div
-          class="styled__StyledCypherMessage-sc-1dtvgs1-20 styled__StyledCypherErrorMessage-sc-1dtvgs1-22 izHDyp"
+          class="styled__StyledCypherMessage-sc-1dtvgs1-11 styled__StyledCypherErrorMessage-sc-1dtvgs1-13 eiZHEz"
         >
           ERROR
         </div>
         <h4
-          class="styled__StyledH4-sc-1dtvgs1-26 jXSkte"
+          class="styled__StyledErrorH4-sc-1dtvgs1-18 iuwYhw"
         >
           Neo.ClientError.Procedure.ProcedureNotFound
         </h4>
       </div>
       <div
-        class="styled__StyledDiv-sc-1dtvgs1-17 kkPWFM"
+        class="styled__StyledDiv-sc-1dtvgs1-8 gtWulV"
       >
         <pre
-          class="styled__StyledPreformattedArea-sc-1dtvgs1-28 fxWKEH"
+          class="styled__StyledPreformattedArea-sc-1dtvgs1-20 dfaLxR"
         >
-          Neo.ClientError.Procedure.ProcedureNotFound: not found
+          not found
         </pre>
       </div>
       <div
-        class="styled__StyledLinkContainer-sc-1dtvgs1-19 eorHIm"
+        class="styled__StyledLinkContainer-sc-1dtvgs1-10 ghcLOH"
       >
         <a
-          class="styled__StyledLink-sc-1dtvgs1-18 cLfBMz"
+          class="styled__StyledLink-sc-1dtvgs1-9 eqfWgl"
         >
           <i
-            class="fa fa-play-circle-o IconContainer__I-sc-16whwc5-0 eTELIJ"
+            class="IconContainer__I-sc-16whwc5-0 eTELIJ fa fa-play-circle-o"
           />
            List available procedures
         </a>
@@ -74,32 +74,32 @@ exports[`ErrorsViews ErrorsView displays procedure link if unknown procedure 1`]
 exports[`ErrorsViews ErrorsView does displays an error 1`] = `
 <div>
   <div
-    class="styled__StyledHelpFrame-sc-1dtvgs1-14 IJQaq"
+    class="styled__StyledHelpFrame-sc-1dtvgs1-5 THzmJ"
   >
     <div
-      class="styled__StyledHelpContent-sc-1dtvgs1-15 jPcVVC"
+      class="styled__StyledHelpContent-sc-1dtvgs1-6 NNcJM"
     >
       <div
-        class="styled__StyledHelpDescription-sc-1dtvgs1-16 buBBgk"
+        class="styled__StyledHelpDescription-sc-1dtvgs1-7 dlNdyW"
       >
         <div
-          class="styled__StyledCypherMessage-sc-1dtvgs1-20 styled__StyledCypherErrorMessage-sc-1dtvgs1-22 izHDyp"
+          class="styled__StyledCypherMessage-sc-1dtvgs1-11 styled__StyledCypherErrorMessage-sc-1dtvgs1-13 eiZHEz"
         >
           ERROR
         </div>
         <h4
-          class="styled__StyledH4-sc-1dtvgs1-26 jXSkte"
+          class="styled__StyledErrorH4-sc-1dtvgs1-18 iuwYhw"
         >
           Test.Error
         </h4>
       </div>
       <div
-        class="styled__StyledDiv-sc-1dtvgs1-17 kkPWFM"
+        class="styled__StyledDiv-sc-1dtvgs1-8 gtWulV"
       >
         <pre
-          class="styled__StyledPreformattedArea-sc-1dtvgs1-28 fxWKEH"
+          class="styled__StyledPreformattedArea-sc-1dtvgs1-20 dfaLxR"
         >
-          Test.Error: Test error description
+          Test error description
         </pre>
       </div>
     </div>

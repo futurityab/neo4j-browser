@@ -23,7 +23,7 @@ with modern and easy-to-use tools.
 
 #### E2E Suite
 
-`yarn e2e` to run the cypress js test suite (requires a fresh installation of neo4j to run against, expects neo4j 3.5 by default).
+`yarn e2e` to run the cypress js test suite (requires a **fresh** installation of neo4j to run against, expects neo4j 3.5 by default).
 `yarn e2e --env server=3.3` to only run cypress js tests valid for neo4j server version 3.3.
 
 To run on an existing server (with a password already set), you can use any of these (the default password is set to "newpassword", pass in `--env browser-password=your-password`):  
@@ -31,13 +31,14 @@ To run on an existing server (with a password already set), you can use any of t
 `yarn e2e-local-open --env server=3.4`  
 The latter just opens Cypress runner so you can see the tests being executed and run only some of them. Very useful when writing tests.
 
-There are also e2e tests that covers import from CSV files. To run thise, copy the `e2e_tests/files/import.csv` to the `import/` directory of the database you want to run the tests on and then start the e2e tests with the `--env include-import-tests=true` flag.
+There are also e2e tests that cover import from CSV files. To run these, copy the `e2e_tests/files/import.csv` to the `import/` directory of the database you want to run the tests on and then start the e2e tests with the `--env include-import-tests=true` flag.
 Example: `yarn e2e-local-open --env server=3.4,include-import-tests=true`
 
 Here are the available options / env variables:
 
 ```
-server=3.2|3.3|3.4|3.5 (default 3.4)
+server=3.2|3.3|3.4|3.5|4.0|4.1 (default 3.5)
+edition=enterprise|community|aura (default enterprise)
 browser-password=<your-pw> (default 'newpassword')
 include-import-tests=true|false (default false)
 bolt-url=<bolt url excluding the protocol> (default localhost:7687)
@@ -51,11 +52,11 @@ CYPRESS_E2E_TEST_ENV=local|null (if the initial set of pw should run or not) (de
 CYPRESS_BASE_URL=<url to reach the browser to test> (default http://localhost:8080)
 ```
 
-Example: `CYPRESS_E2E_TEST_ENV="local" CYPRESS_BASE_URL=http://localhost:8081 cypress open --env server=3.4`
+Example: `CYPRESS_E2E_TEST_ENV="local" CYPRESS_BASE_URL=http://localhost:8081 cypress open --env server=3.5`
 
 ## Devtools
 
-Download these two chrome extensions:
+Redux and React have useful devtools, the chrome versions are linked bellow: 
 
 - [Redux devtools](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en)
 - [React devtools](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019 "Neo4j,"
+ * Copyright (c) 2002-2020 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -31,8 +31,8 @@ export const GlobalStyle = createGlobalStyle`
 
   .code-style,
   .CodeMirror {
-    font-family: "Inconsolata", Monaco,"Courier New",Terminal,monospace !important;
-    font-size: 18px !important;
+    font-family: "Fira Code",Monaco,"Courier New",Terminal,monospace !important;
+    font-size: 17px !important;
     line-height: 23px !important;
     -webkit-font-smoothing: initial !important;
     cursor: text !important;
@@ -48,14 +48,18 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .CodeMirror {
-    background-color: #fff !important;
-    padding: 12px !important;
+    background: initial !important; // overrides lib css 
+    margin: 12px !important;
     border-radius: 4px !important;
-    transist: all !important;
+    transition: all !important;
   }
 
   .CodeMirror pre {
     padding: 0 !important;
+
+    .disable-font-ligatures & {
+      font-variant-ligatures: none !important;
+    }
   }
 
   .CodeMirror .CodeMirror-placeholder {
@@ -84,7 +88,7 @@ export const GlobalStyle = createGlobalStyle`
 
   .CodeMirror-scroll {
     overflow: hidden !important;
-    max-height: 140px !important;
+    max-height: 230px !important;
   }
 
   .CodeMirror div.CodeMirror-cursor {
@@ -93,15 +97,17 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   .CodeMirror-sizer {
-    transist: min-height !important;
+    transition: min-height !important;
   }
 
   .CodeMirror-scroll div:nth-child(2) {
-    transist: top !important;
+    transition: top !important;
   }
 
   .prompt {
-    absolute: top 24px left 46px !important;
+    position: absolute;
+    top: 24px;
+    left: 46px !important;
     color: #93969b !important;
     opacity: 0 !important;
     z-index: 100 !important;
